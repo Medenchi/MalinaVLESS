@@ -5,22 +5,9 @@
       "tag": "vless-in",
       "listen": "::",
       "listen_port": 8080,
-      "users": [
-        {
-          "uuid": "504959c0-a777-4264-b2b4-4f7435dff55e",
-          "name": "malinaVPNuser"
-        }
-      ],
-      "transport": {
-        "type": "ws",
-        "path": "/malina-path"
-      }
+      "users": [{"uuid": "0a9f6932-e9d9-4d92-87ee-1bc50a170900", "name": "malina"}],
+      "transport": { "type": "ws", "path": "/malina-path" }
     }
   ],
-  "outbounds": [
-    {
-      "type": "direct",
-      "tag": "direct"
-    }
-  ]
+  "outbounds": [{ "type": "direct", "tag": "direct" }]
 }
