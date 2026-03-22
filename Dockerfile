@@ -1,30 +1,27 @@
 FROM alpine:latest
 
 # Устанавливаем зависимости
-RUN apk add --no-cache curl bash unzip
+RUN apk add --no-cache curl bash
 
-# Создаем папку для xray и конфига
-RUN mkdir -p /etc/xray /usr/local/bin
+# Качаем sing-box (он чище и быстрее для Choreo)
+RUN curl -L https://github.com/SagerNet/sing-box/releases/download/v1.8.5/sing-box-1.8.5-linux-amd64.tar.gz -o /tmp/sb.tar.gz && \
+    tar -xvf /tmp/sb.tar.gz -C /tmp && \
+    mv /tmp/sing-box-*/sing-box /usr/local/bin/sing-box && \
+    rm -rf /tmp/*
 
-# Скачиваем и распаковываем xray
-RUN curl -L https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip -o /tmp/xray.zip && \
-    unzip /tmp/xray.zip -d /usr/local/bin && \
-    rm /tmp/xray.zip
+# Создаем папку для конфига
+RUN mkdir -p /etc/sing-box
 
 # Копируем конфиг
-COPY config.json /etc/xray/config.json
+COPY config.json /etc/sing-box/config.json
 
-# --- ИСПРАВЛЕНИЕ ОШИБКИ БЕЗОПАСНОСТИ ---
-# Создаем непривилегированного пользователя с ID 10014 (как просит Choreo)
-RUN addgroup -S xraygroup && adduser -S xrayuser -G xraygroup -u 10014
+# Настройка пользователя для Choreo
+RUN addgroup -S sbgroup && adduser -S sbuser -G sbgroup -u 10014
+RUN chown -R sbuser:sbgroup /etc/sing-box /usr/local/bin/sing-box
 
-# Даем права этому пользователю на работу с файлами
-RUN chown -R xrayuser:xraygroup /etc/xray /usr/local/bin/xray
-
-# Переключаемся на этого пользователя
 USER 10014
-# ---------------------------------------
 
 EXPOSE 8080
 
-CMD ["/usr/local/bin/xray", "-c", "/etc/xray/config.json"]
+# Запуск sing-box
+CMD ["/usr/local/bin/sing-box", "run", "-c", "/etc/sing-box/config.json"]
