@@ -3,8 +3,8 @@ FROM alpine:latest
 # Устанавливаем зависимости
 RUN apk add --no-cache curl bash
 
-# Качаем sing-box (он чище и быстрее для Choreo)
-RUN curl -L https://github.com/SagerNet/sing-box/releases/download/v1.8.5/sing-box-1.8.5-linux-amd64.tar.gz -o /tmp/sb.tar.gz && \
+# Качаем самую новую версию sing-box (v1.11.1), где исправлены CVE
+RUN curl -L https://github.com/SagerNet/sing-box/releases/download/v1.11.1/sing-box-1.11.1-linux-amd64.tar.gz -o /tmp/sb.tar.gz && \
     tar -xvf /tmp/sb.tar.gz -C /tmp && \
     mv /tmp/sing-box-*/sing-box /usr/local/bin/sing-box && \
     rm -rf /tmp/*
@@ -12,7 +12,7 @@ RUN curl -L https://github.com/SagerNet/sing-box/releases/download/v1.8.5/sing-b
 # Создаем папку для конфига
 RUN mkdir -p /etc/sing-box
 
-# Копируем конфиг
+# Копируем конфиг (он остается прежним)
 COPY config.json /etc/sing-box/config.json
 
 # Настройка пользователя для Choreo
